@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css';
 import { Canvas } from "@react-three/fiber";
 import Renderer3D from "../components/3d/renderer";
 import React, { Suspense } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 export default function Home() {
   return (
@@ -20,55 +20,71 @@ export default function Home() {
         <main className={styles.main}>
           <Row>
             <Col md="6" >
-              <Canvas style={{ height: "100%", width: "100%" }}>
-                <Suspense>
-                  <Renderer3D
-                    path={'cube.obj'}
-                    scale={[1, 1, 1]}
-                    position={[0, 0, 0]}
-                    renderPriority={2}
-                  />
-                </Suspense>
-              </Canvas>
+              <Card>
+                <Card.Body>
+                  <Canvas style={{ height: "100%", width: "100%" }}>
+                    <Suspense>
+                      <Renderer3D
+                        path={'cube.obj'}
+                        scale={[1, 1, 1]}
+                        position={[0, 0, 0]}
+                        renderPriority={2}
+                      />
+                    </Suspense>
+                  </Canvas>
+                </Card.Body>
+              </Card>
             </Col>
 
             <Col md="6">
-              <Canvas style={{ height: "100%", width: "100%" }}>
-                <Suspense>
-                  <Renderer3D
-                    path={'cube.obj'}
-                    scale={[1, 1, 1]}
-                    position={[0, 0, 0]}
-                    renderPriority={2}
-                  />
-                </Suspense>
-              </Canvas>
+              <Card>
+                <Card.Body>
+                  <Canvas style={{ height: "100%", width: "100%" }}>
+                    <Suspense>
+                      <Renderer3D
+                        path={'cube.obj'}
+                        scale={[1, 1, 1]}
+                        position={[0, 0, 0]}
+                        renderPriority={2}
+                      />
+                    </Suspense>
+                  </Canvas>
+                </Card.Body>
+              </Card>
             </Col>
 
             <Col md="6">
-              <Canvas style={{ height: "100%", width: "100%" }}>
-                <Suspense>
-                  <Renderer3D
-                    path={'cube.obj'}
-                    scale={[1, 1, 1]}
-                    position={[0, 0, 0]}
-                    renderPriority={2}
-                  />
-                </Suspense>
-              </Canvas>
+              <Card>
+                <Card.Body>
+                  <Canvas style={{ height: "100%", width: "100%" }}>
+                    <Suspense>
+                      <Renderer3D
+                        path={'cube.obj'}
+                        scale={[1, 1, 1]}
+                        position={[0, 0, 0]}
+                        renderPriority={2}
+                      />
+                    </Suspense>
+                  </Canvas>
+                </Card.Body>
+              </Card>
             </Col>
 
             <Col md="6">
-              <Canvas style={{ height: "100%", width: "100%" }}>
-                <Suspense>
-                  <Renderer3D
-                    path={'cube.obj'}
-                    scale={[1, 1, 1]}
-                    position={[0, 0, 0]}
-                    renderPriority={2}
-                  />
-                </Suspense>
-              </Canvas>
+              <Card>
+                <Card.Body>
+                  <Canvas style={{ height: "100%", width: "100%" }}>
+                    <Suspense>
+                      <Renderer3D
+                        path={'cube.obj'}
+                        scale={[1, 1, 1]}
+                        position={[0, 0, 0]}
+                        renderPriority={2}
+                      />
+                    </Suspense>
+                  </Canvas>
+                </Card.Body>
+              </Card>
             </Col>
           </Row>
         </main>

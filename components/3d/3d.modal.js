@@ -17,6 +17,7 @@ const Model = (props) => {
     const { progress } = useProgress()
     const pathIsFile = path instanceof File;
     const [object, setObject] = useState(null);
+    const [objectLoaded, setObjectLoaded] = useState(false);
 
     useEffect(() => {
         setObject(null);
