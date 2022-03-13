@@ -3,8 +3,10 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import * as THREE from 'three';
-import { getFileExtension } from '../../utils/utils';
+import { getFileExtension, getRandomColor } from '../../utils/utils';
 import { Html, useProgress } from '@react-three/drei'
+import useEventListener from '@use-it/event-listener'
+import { useFrame } from '@react-three/fiber';
 
 const Model = (props) => {
     let {
@@ -12,12 +14,19 @@ const Model = (props) => {
         scale,
         rotation,
         position = [0, 0, 0],
+        keyboardTranslate
     } = props;
 
     const { progress } = useProgress()
     const pathIsFile = path instanceof File;
     const [object, setObject] = useState(null);
     const [objectLoaded, setObjectLoaded] = useState(false);
+
+    useFrame(() => {
+        if (getRenderableObject()) {
+            getRenderableObject()['rotation'].y += 0.01;
+        }
+      });
 
     useEffect(() => {
         setObject(null);
@@ -31,7 +40,48 @@ const Model = (props) => {
                 setObjectLoaded(true);
             });
         });
+
     }, [path])
+
+    if (keyboardTranslate) {
+        useEventListener('keydown', ({key}) => {
+            switch(key) {
+                case 'ArrowLeft': {
+                    leftPress();
+                    break;
+                }
+    
+                case 'ArrowRight': {
+                    rightPress();
+                    break;
+                }
+
+                case ' ': {
+                    spacePress();
+                    break;
+                }
+            }
+        });
+    }
+
+    const leftPress = () => {
+        getRenderableObject().position.x -= 0.1;
+    }
+
+    const rightPress = () => {
+        getRenderableObject().position.x += 0.1;
+    }
+
+    const spacePress = () => {
+        if (getRenderableObject()) {
+            getRenderableObject().traverse((o) => {
+                if (o.isMesh && o.material != null) {
+                    o.material.color = new THREE.Color(getRandomColor());
+                    // o.material = new THREE.MeshBasicMaterial({color: 0xFF9B86})
+                }
+            });
+        }
+    }
 
     const getRenderableObject = () => {
         if (extension == 'gltf' || extension == 'glb') {

@@ -28,6 +28,7 @@ const Renderer3D = (props) => {
                 position={props.position}
                 renderPriority={props.renderPriority}
                 camera={camera}
+                keyboardTranslate={props.keyboardTranslate}
             />
 
             <Plane />
