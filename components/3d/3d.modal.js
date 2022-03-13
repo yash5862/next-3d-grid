@@ -43,8 +43,9 @@ const Model = (props) => {
 
     }, [path])
 
-    if (keyboardTranslate) {
-        useEventListener('keydown', ({key}) => {
+    
+    useEventListener('keydown', ({key}) => {
+        if (keyboardTranslate) {
             switch(key) {
                 case 'ArrowLeft': {
                     leftPress();
@@ -61,8 +62,8 @@ const Model = (props) => {
                     break;
                 }
             }
-        });
-    }
+        }
+    });
 
     const leftPress = () => {
         getRenderableObject().position.x -= 0.1;
