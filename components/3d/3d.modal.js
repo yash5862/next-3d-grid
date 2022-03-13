@@ -13,14 +13,29 @@ const Model = (props) => {
         path,
         scale,
         position = [0, 0, 0],
-        keyboardTranslate
+        keyboardTranslate,
+        animations = [],
+        externalAnimation
     } = props;
 
     const { progress } = useProgress()
     const pathIsFile = path instanceof File;
     const [object, setObject] = useState(null);
+    const [ animationsData, setAnimationsData ] = useState([]);
+
+    let animationPlaying = false
 
     useEffect(() => {
+        load3DObject();
+        loadAnimations();
+    }, [path])
+
+    useEffect(() => {
+        animationPlaying = false;
+        toggleAnimationPlay();
+    }, [externalAnimation])
+
+    const load3DObject = () => {
         setObject(null);
         let url = pathIsFile ? URL.createObjectURL(path) : path;
         let loaderNameSpace = getValidLoader();
@@ -29,9 +44,33 @@ const Model = (props) => {
         loader.load('', (loadData, err) => {
             setObject(loadData);
         });
+    }
 
-    }, [path])
+    const loadAnimations = async () => {
+        let animationsDataPromise = [];
+        animations.map(async (animation) => {
+            let url = animation instanceof File ? URL.createObjectURL(animation) : animation;
+            let extensionName = getFileExtension(url);
+            let loaderNameSpace = getValidLoader(extensionName);
+            let loader = new loaderNameSpace();
+            loader.setPath(url);
+            animationsDataPromise.push(load3dAsync(loader));
+        });
 
+        animationsDataPromise = await Promise.all(animationsDataPromise);
+        setAnimationsData(animationsDataPromise);
+    }
+
+    const load3dAsync = async (loader) => {
+        return new Promise((resolve, reject) => {
+            loader.load('', (loadData, err) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(loadData);
+            });
+        })
+    }
     
     useEventListener('keydown', ({key}) => {
         if (keyboardTranslate) {
@@ -63,12 +102,35 @@ const Model = (props) => {
     }
 
     const spacePress = () => {
-        if (getRenderableObject()) {
-            getRenderableObject().traverse((o) => {
-                if (o.isMesh && o.material != null) {
-                    o.material.color = new THREE.Color(getRandomColor());
-                }
-            });
+        // if (getRenderableObject()) {
+        //     getRenderableObject().traverse((o) => {
+        //         if (o.isMesh && o.material != null) {
+        //             o.material.color = new THREE.Color(getRandomColor());
+        //         }
+        //     });
+        // }
+        toggleAnimationPlay();
+    }
+
+    let mixer
+    const toggleAnimationPlay = () => {
+        if (!animationPlaying) {
+            let animationSource = externalAnimation ? animationsData : [getRenderableObject()];
+            if (animationSource) {
+                mixer = new THREE.AnimationMixer(getRenderableObject());
+                setTimeout(() => {
+                    animationSource.forEach(fbxData => {
+                        fbxData.animations.forEach(clip => {
+                            const action = mixer.clipAction(clip)
+                            action.play();
+                        })
+                    });
+                })
+            }
+            animationPlaying = true;
+        } else {
+            mixer = null;
+            animationPlaying = false;
         }
     }
 
@@ -80,25 +142,16 @@ const Model = (props) => {
         }
     }
 
-    let mixer
-    if (getRenderableObject() && getRenderableObject().animations.length) {
-        mixer = new THREE.AnimationMixer(getRenderableObject());
-        getRenderableObject().animations.forEach(clip => {
-            const action = mixer.clipAction(clip)
-            action.play();
-        });
-    }
-
     useFrame((state, delta) => {
         mixer?.update(delta)
     })
 
-    const getValidLoader = () => {
-        if (extension == 'gltf' || extension == 'glb') {
+    const getValidLoader = (name = extension) => {
+        if (name == 'gltf' || name == 'glb') {
             return GLTFLoader;
-        } else if (extension == 'obj') {
+        } else if (name == 'obj') {
             return OBJLoader;
-        } else if (extension == 'fbx') {
+        } else if (name == 'fbx') {
             return FBXLoader;
         }
     }
