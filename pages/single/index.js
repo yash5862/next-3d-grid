@@ -10,10 +10,10 @@ export default function SinglePage() {
             <Col md="12" >
               <Card>
                 <Card.Body>
-                  <Canvas style={{ height: "100%", width: "100%" }}>
+                  <Canvas style={{ height: "90vh", width: "100%" }} camera={{ fov: 50, position: [0, 2, 8]}}>
                     <Suspense>
                       <Renderer3D
-                        path={'cube.obj'}
+                        path={'test.fbx'}
                         scale={[1, 1, 1]}
                         position={[0, 0, 0]}
                         renderPriority={2}

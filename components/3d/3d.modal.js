@@ -12,7 +12,6 @@ const Model = (props) => {
     let {
         path,
         scale,
-        rotation,
         position = [0, 0, 0],
         keyboardTranslate
     } = props;
@@ -20,13 +19,6 @@ const Model = (props) => {
     const { progress } = useProgress()
     const pathIsFile = path instanceof File;
     const [object, setObject] = useState(null);
-    const [objectLoaded, setObjectLoaded] = useState(false);
-
-    useFrame(() => {
-        if (getRenderableObject()) {
-            getRenderableObject()['rotation'].y += 0.01;
-        }
-      });
 
     useEffect(() => {
         setObject(null);
@@ -36,9 +28,6 @@ const Model = (props) => {
         loader.setPath(url);
         loader.load('', (loadData, err) => {
             setObject(loadData);
-            setTimeout(() => {
-                setObjectLoaded(true);
-            });
         });
 
     }, [path])
@@ -78,7 +67,6 @@ const Model = (props) => {
             getRenderableObject().traverse((o) => {
                 if (o.isMesh && o.material != null) {
                     o.material.color = new THREE.Color(getRandomColor());
-                    // o.material = new THREE.MeshBasicMaterial({color: 0xFF9B86})
                 }
             });
         }
@@ -91,6 +79,19 @@ const Model = (props) => {
             return object;
         }
     }
+
+    let mixer
+    if (getRenderableObject() && getRenderableObject().animations.length) {
+        mixer = new THREE.AnimationMixer(getRenderableObject());
+        getRenderableObject().animations.forEach(clip => {
+            const action = mixer.clipAction(clip)
+            action.play();
+        });
+    }
+
+    useFrame((state, delta) => {
+        mixer?.update(delta)
+    })
 
     const getValidLoader = () => {
         if (extension == 'gltf' || extension == 'glb') {
@@ -134,8 +135,9 @@ const Model = (props) => {
     // console.log(path instanceof File ? path.path : path, path instanceof File ? URL.createObjectURL(path) : path)
     const extension = getFileExtension(pathIsFile ? path.path : path);
 
+    autoScaleAndFit();
     if (progress == '100') {
-        adjustWorldCenter();
+        // adjustWorldCenter();
         autoScaleAndFit();
     }
 
