@@ -120,10 +120,12 @@ const Model = (props) => {
                 mixer = new THREE.AnimationMixer(getRenderableObject());
                 setTimeout(() => {
                     animationSource.forEach(fbxData => {
-                        fbxData.animations.forEach(clip => {
-                            const action = mixer.clipAction(clip)
-                            action.play();
-                        })
+                        if (fbxData) {
+                            fbxData.animations.forEach(clip => {
+                                const action = mixer.clipAction(clip)
+                                action.play();
+                            })
+                        }
                     });
                 })
             }
