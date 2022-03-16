@@ -22,7 +22,11 @@
     "three": "^0.138.3"
   },
   "devDependencies": {
+    "@types/node": "^17.0.21",
+    "@types/react": "^17.0.40",
+    "@types/three": "^0.138.0",
     "eslint": "8.10.0",
-    "eslint-config-next": "12.1.0"
+    "eslint-config-next": "12.1.0",
+    "typescript": "^4.6.2"
   }
 }
